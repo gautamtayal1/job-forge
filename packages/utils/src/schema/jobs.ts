@@ -7,5 +7,6 @@ export const JobSchema = z.object({
   env: z.record(z.string()),
   schedule: z.string().optional(),
   timeout: z.number().optional(),
-  retries: z.number().optional()
+  retries: z.number().optional(),
+  isActive: z.boolean().optional()
 });

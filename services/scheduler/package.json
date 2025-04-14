@@ -1,0 +1,26 @@
+{
+  "name": "@repo/scheduler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@prisma/client": "^6.6.0",
+    "@repo/typescript-config": "workspace:*",
+    "cron-parser": "^5.1.1",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "@repo/db": "workspace:*"
+  }
+}

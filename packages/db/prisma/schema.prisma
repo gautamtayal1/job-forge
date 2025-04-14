@@ -29,6 +29,12 @@ model JobRun {
   status    String
   logs      String
   exitCode  Int
+  trigger   JobTrigger
   startedAt DateTime @default(now())
   endedAt   DateTime?
+}
+
+enum JobTrigger {
+  scheduler
+  manual
 }

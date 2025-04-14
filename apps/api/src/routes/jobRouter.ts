@@ -42,10 +42,11 @@ jobRouter.post("/:id/run", async (req, res) => {
       env: job.env as Record<string, string>,
       timeout: job.timeout ?? undefined,
       retries: job?.retries ?? undefined,
+      isActive: job.isActive
     }
-
-    // await jobQueue.add("run-job", payload)
-
+    if (!job.isActive) {
+        // await jobQueue.add("run-job", payload)
+    }
     res.status(201).json({message: "job queued successfully"})
   } catch (error) {
     console.log(error)
