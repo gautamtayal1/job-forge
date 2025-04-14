@@ -2,7 +2,7 @@ import { Router } from "express";
 import YAML from "yaml";
 import { JobPayload, JobSchema } from "@repo/utils"
 import prisma from "@repo/db/client"
-
+import { jobQueue } from "@repo/queue"
 const jobRouter: Router = Router()
 
 jobRouter.post("/", async(req, res) => {
@@ -45,7 +45,7 @@ jobRouter.post("/:id/run", async (req, res) => {
       isActive: job.isActive
     }
     if (!job.isActive) {
-        // await jobQueue.add("run-job", payload)
+        await jobQueue.add("run-job", payload)
     }
     res.status(201).json({message: "job queued successfully"})
   } catch (error) {

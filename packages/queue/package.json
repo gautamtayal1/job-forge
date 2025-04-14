@@ -1,8 +1,9 @@
 {
-  "name": "@repo/scheduler",
+  "name": "@repo/queue",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts"
   },
@@ -16,12 +17,13 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@prisma/client": "^6.6.0",
     "@repo/typescript-config": "workspace:*",
-    "cron-parser": "^5.1.1",
+    "bullmq": "^5.48.1",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.3",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
     "@repo/db": "workspace:*",
-    "@repo/queue": "workspace:*"
+    "@repo/typescript-config": "workspace:*"
   }
 }

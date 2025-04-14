@@ -1,5 +1,6 @@
 import prisma from "@repo/db/client"
 import {CronExpressionParser} from "cron-parser"
+import { jobQueue } from "@repo/queue"
 
 const INTERVAL = 60_000
 let lastRun = new Date()
