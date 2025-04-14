@@ -1,10 +1,17 @@
+version: "3.9"
 services:
-  mongo:
-    image: mongo:6
-    ports: 
-      - "27017:27017"
+  postgres:
+    image: postgres:15
+    container_name: job-forge-postgres
+    restart: always
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: jobforge
+      POSTGRES_PASSWORD: jobforge123
+      POSTGRES_DB: jobforge
     volumes:
-      - mongo_data:/data/db
+      - jobforge_pgdata:/var/lib/postgresql/data
 
 volumes:
-  mongo_data:
+  jobforge_pgdata:
