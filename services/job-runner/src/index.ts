@@ -6,18 +6,6 @@ import { pub } from "@repo/queue"
 
 console.log("👂 Worker starting on queue: job-runner");
 
-// function runDocker(jobData: any): Promise<string> {
-//   const {image, command} = jobData
-//   const cmd = `docker run --rm ${image} ${command.join(" ")}`
-
-//   return new Promise((resolve, reject) => {
-//     exec(cmd, (err, stdout, stderr) => {
-//       if(err) return reject(stderr)
-//       resolve(stdout)
-//     })
-//   })
-// }
-
 export async function runDockerStream(jobRunId: string, jobData: any): Promise<string> {
   const {image, command} = jobData
   const args = ["run", "--rm", image, ...command]
