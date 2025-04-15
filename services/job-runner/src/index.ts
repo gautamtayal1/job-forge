@@ -1,18 +1,49 @@
 import { Worker } from "bullmq"
 import { connection, jobQueue } from "@repo/queue"
 import prisma from "@repo/db/client"
-import { exec } from "child_process"
+import { spawn } from "child_process"
+import { pub } from "@repo/queue"
 
 console.log("👂 Worker starting on queue: job-runner");
 
-function runDocker(jobData: any): Promise<string> {
+// function runDocker(jobData: any): Promise<string> {
+//   const {image, command} = jobData
+//   const cmd = `docker run --rm ${image} ${command.join(" ")}`
+
+//   return new Promise((resolve, reject) => {
+//     exec(cmd, (err, stdout, stderr) => {
+//       if(err) return reject(stderr)
+//       resolve(stdout)
+//     })
+//   })
+// }
+
+export async function runDockerStream(jobRunId: string, jobData: any): Promise<string> {
   const {image, command} = jobData
-  const cmd = `docker run --rm ${image} ${command.join(" ")}`
+  const args = ["run", "--rm", image, ...command]
+  const proc = spawn("docker", args)
+
+  let output = ""
+
+  proc.stdout.on("data", (chunk) => {
+    const line = chunk.toString()
+    output += line
+    pub.publish(`job-logs:${jobRunId}`, line)
+  })
+
+  proc.stderr.on("data", (chunk) => {
+    const line = chunk.toString()
+    output += line
+    pub.publish(`job-logs:${jobRunId}`, line)
+  })
 
   return new Promise((resolve, reject) => {
-    exec(cmd, (err, stdout, stderr) => {
-      if(err) return reject(stderr)
-      resolve(stdout)
+    proc.on("close", (code) => {
+      if(code === 0) {
+        resolve(output)
+      } else {
+        reject(new Error(`Job exited with code ${code}`))
+      } 
     })
   })
 }
@@ -39,7 +70,7 @@ const worker = new Worker("job-runner", async(job) => {
   })
 
   try {
-    const output = await withTimeout(runDocker(job.data), timeout)
+    const output = await withTimeout(runDockerStream(runId, job.data), timeout)
 
     await prisma.jobRun.update({
       where: {id: runId},

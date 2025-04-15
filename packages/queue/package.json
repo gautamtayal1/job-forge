@@ -19,6 +19,7 @@
   "dependencies": {
     "@repo/typescript-config": "workspace:*",
     "bullmq": "^5.48.1",
+    "redis": "^4.7.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3"
   },
