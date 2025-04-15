@@ -35,7 +35,18 @@ jobRouter.post("/:id/run", async (req, res) => {
       return
     }
 
+    const jobRun = await prisma.jobRun.create({
+      data: {
+        jobId: job.id,
+        trigger: "manual",
+        status: "queued",
+        logs: "",
+        exitCode: 0
+      }
+    })
+
     const payload: JobPayload = {
+      jobRunId: jobRun.id,
       name: job.name,
       image: job.image,
       command: job.command,
@@ -44,7 +55,7 @@ jobRouter.post("/:id/run", async (req, res) => {
       retries: job?.retries ?? undefined,
       isActive: job.isActive
     }
-    if (!job.isActive) {
+    if (job.isActive) {
         await jobQueue.add("run-job", payload)
     }
     res.status(201).json({message: "job queued successfully"})

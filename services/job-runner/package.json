@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@repo/queue": "workspace:*",
-    "@repo/typescript-config": "workspace:*"
+    "@repo/typescript-config": "workspace:*",
+    "@repo/db": "workspace:*"
   }
 }

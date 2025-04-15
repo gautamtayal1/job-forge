@@ -19,5 +19,12 @@ services:
     ports: 
       - "6379:6379"
 
+  redis-insight:
+    image: redislabs/redisinsight:latest
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
+
 volumes:
   jobforge_pgdata:

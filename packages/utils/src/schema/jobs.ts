@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const JobSchema = z.object({
+  jobRunId: z.string(),
   name: z.string(),
   image: z.string(),
   command: z.array(z.string()),
