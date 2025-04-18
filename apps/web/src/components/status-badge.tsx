@@ -1,10 +1,10 @@
 
-import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Check, RefreshCcw, Circle, X } from "lucide-react";
 
 export type JobStatus = "queued" | "running" | "completed" | "failed";
+type BadgeVariant = "default" | "secondary" | "destructive" | "outline" | "success" | "warning";
 
 interface StatusBadgeProps {
   status: JobStatus;
@@ -17,31 +17,31 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
       case "completed":
         return {
           label: "Completed",
-          variant: "success",
+          variant: "success" as BadgeVariant,
           icon: Check,
         };
       case "running":
         return {
           label: "Running",
-          variant: "warning",
+          variant: "warning" as BadgeVariant,
           icon: RefreshCcw,
         };
       case "queued":
         return {
           label: "Queued",
-          variant: "secondary",
+          variant: "secondary" as BadgeVariant,
           icon: Circle,
         };
       case "failed":
         return {
           label: "Failed",
-          variant: "destructive",
+          variant: "destructive" as BadgeVariant,
           icon: X,
         };
       default:
         return {
           label: status,
-          variant: "secondary",
+          variant: "secondary" as BadgeVariant,
           icon: Circle,
         };
     }
@@ -51,7 +51,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
 
   return (
     <Badge
-      variant={variant as any}
+      variant={variant}
       className={cn(
         "gap-1",
         variant === "success" && "bg-success text-success-foreground",

@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,6 +9,8 @@ import { Layout } from "@/components/layout";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
+import Jobs from "./pages/Jobs";
+import Logs from "./pages/Logs";
 import JobDetails from "./pages/JobDetails";
 import JobRun from "./pages/JobRun";
 import CreateJob from "./pages/CreateJob";
@@ -26,13 +29,12 @@ const App = () => (
           <Routes>
             <Route element={<Layout />}>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/jobs">
-                <Route path="/jobs/create" element={<CreateJob />} />
-                <Route path="/jobs/:jobId" element={<JobDetails />} />
-                <Route path="/jobs/:jobId/runs/:runId" element={<JobRun />} />
-                <Route path="/jobs/:jobId/steps" element={<MultiStepJob />} />
-              </Route>
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="/jobs" element={<Jobs />} />
+              <Route path="/jobs/create" element={<CreateJob />} />
+              <Route path="/jobs/:jobId" element={<JobDetails />} />
+              <Route path="/jobs/:jobId/runs/:runId" element={<JobRun />} />
+              <Route path="/jobs/:jobId/steps" element={<MultiStepJob />} />
+              <Route path="/logs" element={<Logs />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

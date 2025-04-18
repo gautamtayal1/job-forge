@@ -1,9 +1,7 @@
-
-
 import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StatusBadge } from "@/components/status-badge";
+import { StatusBadge, JobStatus } from "@/components/status-badge";
 import { 
   Play, 
   RefreshCw, 
@@ -12,8 +10,27 @@ import {
   Clock
 } from "lucide-react";
 
+interface JobDetail {
+  id: string;
+  name: string;
+  image: string;
+  environment: { key: string; value: string }[];
+  lastRunStatus: JobStatus;
+  lastRunTime: string;
+  triggerType: string;
+  createdAt: string;
+}
+
+interface JobRun {
+  id: string;
+  status: JobStatus;
+  timestamp: string;
+  duration: string;
+  trigger: string;
+}
+
 // Mock data
-const job = {
+const job: JobDetail = {
   id: "job-1",
   name: "Deploy Website",
   image: "node:16",
@@ -28,7 +45,7 @@ const job = {
   createdAt: "2023-01-10T08:30:00Z"
 };
 
-const runs = [
+const runs: JobRun[] = [
   {
     id: "run-101",
     status: "completed",
@@ -111,7 +128,7 @@ export default function JobDetails() {
               <div>
                 <dt className="text-sm font-medium text-muted-foreground">Status</dt>
                 <dd className="mt-1">
-                  <StatusBadge status={job.lastRunStatus as any} />
+                  <StatusBadge status={job.lastRunStatus} />
                 </dd>
               </div>
               <div>
@@ -175,7 +192,7 @@ export default function JobDetails() {
                     </Link>
                   </td>
                   <td className="py-3 px-4">
-                    <StatusBadge status={run.status as any} />
+                    <StatusBadge status={run.status} />
                   </td>
                   <td className="py-3 px-4 text-muted-foreground">
                     {new Date(run.timestamp).toLocaleString()}

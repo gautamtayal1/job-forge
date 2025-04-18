@@ -58,27 +58,17 @@ export function SidebarNav() {
       title: "Logs",
       href: "/logs",
       icon: Terminal,
-    },
-    {
-      title: "Runners",
-      href: "/runners",
-      icon: Server,
-    },
-    {
-      title: "Settings",
-      href: "/settings",
-      icon: Settings,
     }
   ];
 
   return (
     <div className="flex h-screen flex-col border-r bg-sidebar">
       <div className="p-6">
-        <Link to="/" className="flex items-center gap-2 font-semibold">
+        <Link to="/" className="flex items-center gap-4 font-semibold">
           <div className="h-7 w-7 rounded-md bg-primary flex items-center justify-center text-primary-foreground">
-            JF
+            DR
           </div>
-          <span className="text-xl font-bold">JobForge</span>
+          <span className="text-2xl font-bold">DockRun</span>
         </Link>
       </div>
       <div className="flex-1 overflow-auto py-2">

@@ -20,6 +20,18 @@ jobRouter.post("/", async(req, res) => {
   }
 })
 
+
+jobRouter.get('/', async (req, res) => {
+  const userId = req.query.userId as string;
+  const jobs = await prisma.job.findMany({ 
+    where: { 
+      user: { id: userId } 
+    } 
+  });
+  res.json(jobs);
+});
+
+
 jobRouter.post("/:id/run", async (req, res) => {
   const jobId = req.params.id
 

@@ -16,15 +16,17 @@
   "dependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/express": "^5.0.1",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "tsx": "^4.19.3",
     "typescript": "^5.8.3",
     "yaml": "^2.7.1"
   },
   "devDependencies": {
+    "@repo/db": "workspace:*",
+    "@repo/queue": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/utils": "workspace:*",
-    "@repo/db": "workspace:*",
-    "@repo/queue": "workspace:*"
+    "@types/cors": "^2.8.17"
   }
 }
