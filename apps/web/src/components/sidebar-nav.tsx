@@ -9,7 +9,7 @@ import {
   Terminal,
 } from "lucide-react";
 import { Button } from "./ui/button";
-import { SignedIn, SignedOut, SignInButton, SignOutButton, UserButton, useUser } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 
 interface NavItemProps {
   href: string;

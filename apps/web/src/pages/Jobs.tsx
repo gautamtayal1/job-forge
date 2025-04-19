@@ -6,6 +6,7 @@ import { Search } from "lucide-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
 
 interface Job {
   id: string;
@@ -18,11 +19,12 @@ interface Job {
 
 export default function Jobs() {
   const [jobs, setJobs] = useState<Job[]>([])
+  const { user } = useUser();
     useEffect(() => { 
         const fetchJobs = async () => {
             const jobs = await axios.get("http://localhost:8080/jobs", {
               params: {
-                userId: "test-user"
+                userId: user?.id
               }
             })
             setJobs(jobs.data)
