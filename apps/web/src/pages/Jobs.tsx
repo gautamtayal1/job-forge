@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Search } from "lucide-react";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 interface Job {
   id: string;
@@ -49,8 +50,10 @@ export default function Jobs() {
           <Card key={job.id} className="hover:bg-muted/50 transition-colors">
             <CardContent className="flex items-center justify-between p-6">
               <div className="space-y-1">
-                <h3 className="font-semibold">{job.name}</h3>
-                <p className="text-sm text-muted-foreground">{job.description}</p>
+                <Link to={`/jobs/${job.id}`} className="hover:text-primary">
+                  <h3 className="font-semibold">{job.name}</h3>
+                  <p className="text-sm text-muted-foreground">{job.description}</p>
+                </Link>
               </div>
               <div className="flex items-center gap-4">
                 <div className="flex gap-2">

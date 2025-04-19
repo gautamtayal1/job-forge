@@ -1,15 +1,15 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { 
   LayoutDashboard, 
-  Settings, 
+  LogOut, 
   PlayCircle, 
   PlusCircle,
   Terminal,
-  Server
 } from "lucide-react";
+import { Button } from "./ui/button";
+import { SignedIn, SignedOut, SignInButton, SignOutButton, UserButton, useUser } from "@clerk/clerk-react";
 
 interface NavItemProps {
   href: string;
@@ -37,6 +37,7 @@ function NavItem({ href, title, icon: Icon, isActive }: NavItemProps) {
 
 export function SidebarNav() {
   const location = useLocation();
+  const { user } = useUser();
 
   const navItems = [
     {
@@ -68,7 +69,7 @@ export function SidebarNav() {
           <div className="h-7 w-7 rounded-md bg-primary flex items-center justify-center text-primary-foreground">
             DR
           </div>
-          <span className="text-2xl font-bold">DockRun</span>
+          <span className="text-2xl font-bold">JobForge</span>
         </Link>
       </div>
       <div className="flex-1 overflow-auto py-2">
@@ -85,12 +86,39 @@ export function SidebarNav() {
         </nav>
       </div>
       <div className="mt-auto p-4 border-t">
-        <div className="flex items-center gap-3 rounded-lg px-3 py-2">
-          <div className="h-8 w-8 rounded-full bg-secondary" />
-          <div>
-            <p className="text-sm font-medium">dev@example.com</p>
-            <p className="text-xs text-muted-foreground">Administrator</p>
-          </div>
+        <div className="flex items-center gap-3">
+          
+        </div>
+        <div className="flex items-center gap-3">
+          
+            <SignedOut> 
+            
+                <SignInButton>
+                  <Button variant="ghost" className="w-full justify-start">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Sign in
+                  </Button>
+                </SignInButton>
+            </SignedOut>
+          
+        
+            <SignedIn>
+              <div className="flex items-center gap-5">
+                <UserButton 
+                  appearance={{
+                    elements: {
+                      avatarBox: "h-8 w-8",
+                      modalContent: "mx-auto"
+                    }
+                  }}
+                />
+                {user && (
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {user.emailAddresses[0].emailAddress}
+                  </span>
+                )}
+              </div>
+            </SignedIn>
         </div>
       </div>
     </div>

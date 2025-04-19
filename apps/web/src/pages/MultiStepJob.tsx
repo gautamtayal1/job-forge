@@ -10,7 +10,7 @@ import {
   Download
 } from "lucide-react";
 import { useState } from "react";
-// Mock data
+
 const job = {
   id: "job-2",
   name: "Deploy Production Application",

@@ -11,7 +11,7 @@ jobRouter.post("/", async(req, res) => {
     const parsedYaml = YAML.parse(yaml)
     const parsedJob = JobSchema.parse(parsedYaml)
 
-    const job = await prisma.job.create({data: parsedJob})
+    const job = await prisma.job.create({ data: parsedJob })
     res.status(201).json({message: "job created successfully", data: job})
 
   } catch (error) {
@@ -19,7 +19,6 @@ jobRouter.post("/", async(req, res) => {
     res.status(400).json({ message: "Invalid job definition" })
   }
 })
-
 
 jobRouter.get('/', async (req, res) => {
   const userId = req.query.userId as string;
@@ -31,17 +30,15 @@ jobRouter.get('/', async (req, res) => {
   res.json(jobs);
 });
 
-
 jobRouter.post("/:id/run", async (req, res) => {
   const jobId = req.params.id
-
   try {
     const job = await prisma.job.findUnique({
       where: {
         id: jobId
       }
     })
-    
+    console.log(job)
     if (!job) {
       res.status(404).json({error: "Job not found"})
       return
@@ -56,6 +53,7 @@ jobRouter.post("/:id/run", async (req, res) => {
         exitCode: 0
       }
     })
+    console.log(jobRun)
 
     const payload: JobPayload = {
       jobRunId: jobRun.id,
@@ -77,7 +75,12 @@ jobRouter.post("/:id/run", async (req, res) => {
   }
 })
 
+jobRouter.get("/:id/runs", async (req, res) => {
+  const jobId = req.params.id
+  const jobRuns = await prisma.jobRun.findMany({
+    where: { jobId: jobId }
+  })
+  res.json(jobRuns)
+})
+
 export { jobRouter }
-
-
-
