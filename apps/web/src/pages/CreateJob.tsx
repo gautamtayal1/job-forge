@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlusCircle, X, ArrowLeft } from "lucide-react";
+import axios from "axios";
+import { useUser } from "@clerk/clerk-react";
 
-// Mock initial YAML
 const initialYaml = `name: my-job
 image: node:16
 command:
@@ -22,18 +22,23 @@ env:
 schedule: "0 0 * * *" # Daily at midnight
 `;
 
-function FormEditor() {
+export default function CreateJob() {
+  const { user } = useUser();
+  const [name, setName] = useState("my-job");
+  const [image, setImage] = useState("node:16");
+  const [schedule, setSchedule] = useState("0 0 * * *");
   const [envVars, setEnvVars] = useState([
     { key: "NODE_ENV", value: "production" },
     { key: "API_URL", value: "https://api.example.com" },
     { key: "DEBUG", value: "false" }
   ]);
-
+  const [tab, setTab] = useState("form");
   const [commands, setCommands] = useState([
     "npm install",
     "npm run build",
     "npm test"
   ]);
+  const [yaml, setYaml] = useState(initialYaml);
 
   const addEnvVar = () => {
     setEnvVars([...envVars, { key: "", value: "" }]);
@@ -63,22 +68,125 @@ function FormEditor() {
     setCommands(updated);
   };
 
-  return (
+  function parseJobYaml(yamlString: string) {
+    try {
+      const lines = yamlString.split('\n');
+      const result = {
+        name: '',
+        image: '',
+        schedule: '',
+        env: [],
+        command: [],
+        userMail: user?.emailAddresses[0].emailAddress
+      };
+      
+      let currentSection = null;
+      
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        
+        if (!line || line.startsWith('#')) continue;
+        
+        if (line.startsWith('name:')) {
+          result.name = line.substring(5).trim();
+        } else if (line.startsWith('image:')) {
+          result.image = line.substring(6).trim();
+        } else if (line.startsWith('schedule:')) {
+          let scheduleValue = line.substring(9).trim();
+          if (scheduleValue.startsWith('"') && scheduleValue.includes('"')) {
+            scheduleValue = scheduleValue.split('"')[1];
+          } else if (scheduleValue.startsWith("'") && scheduleValue.includes("'")) {
+            scheduleValue = scheduleValue.split("'")[1];
+          }
+          scheduleValue = scheduleValue.split('#')[0].trim();
+          result.schedule = scheduleValue;
+        } else if (line.startsWith('command:')) {
+          currentSection = 'command';
+        } else if (line.startsWith('env:')) {
+          currentSection = 'env';
+        } else if (line.startsWith('- ') && currentSection === 'command') {
+          result.commands.push(line.substring(2).trim());
+        } else if (currentSection === 'env' && line.includes(':')) {
+          const parts = line.split(':');
+          const key = parts[0].trim();
+          let value = parts.slice(1).join(':').trim();
+          
+          if (value.startsWith('"') && value.endsWith('"')) {
+            value = value.slice(1, -1);
+          } else if (value.startsWith("'") && value.endsWith("'")) {
+            value = value.slice(1, -1);
+          }
+          
+          result.envVars.push({ key, value });
+        }
+      }
+      
+      return result;
+    } catch (error) {
+      console.error("Error parsing YAML:", error);
+      return null;
+    }
+  }
+
+  const handleCreateJob = () => {
+    console.log(name, image, schedule, envVars, commands, yaml);
+    console.log(parseJobYaml(yaml));
+
+    if (tab === "form") {
+      const submit = async () => {
+        const response = await axios.post("http://localhost:8080/jobs", {
+          name,
+          image,
+          schedule: schedule ? schedule : null,
+          env: envVars,
+          command: commands,
+          userMail: user?.emailAddresses[0].emailAddress
+        });
+        console.log(response.data);
+      };
+      submit();
+    } else {
+      const submit = async () => {
+        const response = await axios.post("http://localhost:8080/jobs", {
+          ...parseJobYaml(yaml),
+        });
+        console.log(response.data); 
+      };
+      submit();
+    }
+  };
+
+  const renderFormEditor = () => (
     <div className="space-y-8">
       <div className="grid grid-cols-1 gap-6">
         <div className="space-y-2">
           <Label htmlFor="name">Job Name</Label>
-          <Input id="name" placeholder="my-job" defaultValue="my-job" />
+          <Input 
+            id="name" 
+            placeholder="my-job" 
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="image">Container Image</Label>
-          <Input id="image" placeholder="node:16" defaultValue="node:16" />
+          <Input 
+            id="image" 
+            placeholder="node:16" 
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+          />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="schedule">Schedule (cron format)</Label>
-          <Input id="schedule" placeholder="0 0 * * *" defaultValue="0 0 * * *" />
+          <Input 
+            id="schedule" 
+            placeholder="0 0 * * *" 
+            value={schedule}
+            onChange={(e) => setSchedule(e.target.value)}
+          />
           <p className="text-xs text-muted-foreground">Daily at midnight (0 0 * * *)</p>
         </div>
 
@@ -163,12 +271,8 @@ function FormEditor() {
       </div>
     </div>
   );
-}
 
-function YamlEditor() {
-  const [yaml, setYaml] = useState(initialYaml);
-
-  return (
+  const renderYamlEditor = () => (
     <div className="space-y-4">
       <div className="bg-secondary/50 rounded-md">
         <textarea
@@ -179,9 +283,7 @@ function YamlEditor() {
       </div>
     </div>
   );
-}
 
-export default function CreateJob() {
   return (
     <div className="space-y-6">
       <div>
@@ -207,14 +309,14 @@ export default function CreateJob() {
         <CardContent className="pt-6">
           <Tabs defaultValue="form">
             <TabsList className="mb-4">
-              <TabsTrigger value="form">Form</TabsTrigger>
-              <TabsTrigger value="yaml">YAML</TabsTrigger>
+              <TabsTrigger value="form" onClick={() => setTab("form")}>Form</TabsTrigger>
+              <TabsTrigger value="yaml" onClick={() => setTab("yaml")}>YAML</TabsTrigger>
             </TabsList>
             <TabsContent value="form">
-              <FormEditor />
+              {renderFormEditor()}
             </TabsContent>
             <TabsContent value="yaml">
-              <YamlEditor />
+              {renderYamlEditor()}
             </TabsContent>
           </Tabs>
         </CardContent>
@@ -222,8 +324,8 @@ export default function CreateJob() {
 
       <div className="flex justify-end gap-2">
         <Button variant="outline">Cancel</Button>
-        <Button>Create Job</Button>
+        <Button onClick={handleCreateJob}>Create Job</Button>
       </div>
     </div>
   );
-}
+} 

@@ -16,21 +16,19 @@ model User {
 }
 
 model Job {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  image       String
-  command     String[]
-  env         Json
-  schedule    String?
-  isActive    Boolean  @default(true)
-  timeout     Int?
-  retries     Int?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  runs        JobRun[]
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String
+  id        String   @id @default(uuid())
+  name      String
+  image     String
+  command   String[]
+  env       Json
+  schedule  String?
+  timeout   Int?
+  retries   Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  runs      JobRun[]
+  user      User     @relation(fields: [userMail], references: [email])
+  userMail  String   
 }
 
 model JobRun {

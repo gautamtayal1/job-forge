@@ -20,17 +20,22 @@ interface Job {
 export default function Jobs() {
   const [jobs, setJobs] = useState<Job[]>([])
   const { user } = useUser();
-    useEffect(() => { 
-        const fetchJobs = async () => {
-            const jobs = await axios.get("http://localhost:8080/jobs", {
-              params: {
-                userId: user?.id
-              }
-            })
-            setJobs(jobs.data)
-        }
-        fetchJobs()
-    }, [])
+
+  useEffect(() => { 
+    console.log("useeffect")
+    console.log(user)
+    if (!user) return;
+      const fetchJobs = async () => {
+        const jobs = await axios.get("http://localhost:8080/jobs", {
+          params: {
+            email: user?.emailAddresses[0].emailAddress
+          }
+        })
+        console.log(jobs.data)
+        setJobs(jobs.data)
+      }
+      fetchJobs()
+  }, [user])
 
   return (
     <div className="space-y-6">
@@ -42,45 +47,54 @@ export default function Jobs() {
             <Input placeholder="Search jobs..." className="pl-10 w-64" />
           </div>
           <Button asChild>
-            <a href="/jobs/create">Create New Job</a>
+            <Link to="/jobs/create">Create New Job</Link>
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-4">
-        {jobs.map((job) => (
-          <Card key={job.id} className="hover:bg-muted/50 transition-colors">
-            <CardContent className="flex items-center justify-between p-6">
-              <div className="space-y-1">
-                <Link to={`/jobs/${job.id}`} className="hover:text-primary">
-                  <h3 className="font-semibold">{job.name}</h3>
-                  <p className="text-sm text-muted-foreground">{job.description}</p>
-                </Link>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="bg-primary/10 hover:bg-primary/20 text-primary"
-                    // onClick={() => handleRunJob(job.id)}
-                  >
-                    Run
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    className="bg-primary/10 hover:bg-primary/20 text-primary"
-                    // onClick={() => handleScheduleJob(job.id)}
-                  >
-                    Schedule
-                  </Button>
+      {jobs.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-12 space-y-4">
+          <p className="text-lg text-muted-foreground">No jobs yet</p>
+          <Button asChild>
+            <Link to="/jobs/create">Create Your First Job</Link>
+          </Button>
+        </div>
+      ) : (
+        <div className="grid gap-4">
+          {jobs.map((job) => (
+            <Card key={job.id} className="hover:bg-muted/50 transition-colors">
+              <CardContent className="flex items-center justify-between p-6">
+                <div className="space-y-1">
+                  <Link to={`/jobs/${job.id}`} className="hover:text-primary">
+                    <h3 className="font-semibold">{job.name}</h3>
+                    <p className="text-sm text-muted-foreground">{job.description}</p>
+                  </Link>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                <div className="flex items-center gap-4">
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="bg-primary/10 hover:bg-primary/20 text-primary"
+                      // onClick={() => handleRunJob(job.id)}
+                    >
+                      Run
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="bg-primary/10 hover:bg-primary/20 text-primary"
+                      // onClick={() => handleScheduleJob(job.id)}
+                    >
+                      Schedule
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -7,11 +7,7 @@ const jobRouter: Router = Router()
 
 jobRouter.post("/", async(req, res) => {
   try {
-    const yaml = req.body.yaml
-    const parsedYaml = YAML.parse(yaml)
-    const parsedJob = JobSchema.parse(parsedYaml)
-
-    const job = await prisma.job.create({ data: parsedJob })
+    const job = await prisma.job.create({ data : req.body })
     res.status(201).json({message: "job created successfully", data: job})
 
   } catch (error) {
@@ -21,10 +17,10 @@ jobRouter.post("/", async(req, res) => {
 })
 
 jobRouter.get('/', async (req, res) => {
-  const userId = req.query.userId as string;
+  const email = req.query.email as string;
   const jobs = await prisma.job.findMany({ 
     where: { 
-      user: { id: userId } 
+      userMail: email
     } 
   });
   res.json(jobs);
